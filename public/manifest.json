@@ -1,25 +1,62 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+	"short_name": "Milanuncios Bot",
+	"name": "Renueva automaticamente anuncios de milanuncios",
+	"icons": [
+		{
+			"src": "https://scm-milanuncios-frontend-pro.milanuncios.com/statics/images/icons/icon-square-72x72.png",
+			"sizes": "72x72",
+			"type": "image/png"
+		},
+		{
+			"src": "https://scm-milanuncios-frontend-pro.milanuncios.com/statics/images/icons/icon-square-96x96.png",
+			"sizes": "96x96",
+			"type": "image/png"
+		},
+		{
+			"src": "https://scm-milanuncios-frontend-pro.milanuncios.com/statics/images/icons/icon-square-128x128.png",
+			"sizes": "128x128",
+			"type": "image/png"
+		},
+		{
+			"src": "https://scm-milanuncios-frontend-pro.milanuncios.com/statics/images/icons/icon-square-144x144.png",
+			"sizes": "144x144",
+			"type": "image/png"
+		},
+		{
+			"src": "https://scm-milanuncios-frontend-pro.milanuncios.com/statics/images/icons/icon-square-152x152.png",
+			"sizes": "152x152",
+			"type": "image/png"
+		},
+		{
+			"src": "https://scm-milanuncios-frontend-pro.milanuncios.com/statics/images/icons/icon-square-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "https://scm-milanuncios-frontend-pro.milanuncios.com/statics/images/icons/icon-square-384x384.png",
+			"sizes": "384x384",
+			"type": "image/png"
+		},
+		{
+			"src": "https://scm-milanuncios-frontend-pro.milanuncios.com/statics/images/icons/icon-square-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		}
+	],
+	"splash_pages": null,
+	"related_applications": [
+		{
+			"platform": "play",
+			"id": "com.muba.anuncios",
+			"url": "https://play.google.com/store/apps/details?id=com.muba.anuncios&hl=en"
+		},
+		{
+			"platform": "itunes",
+			"url": "https://apps.apple.com/es/app/milanuncios-comprar-y-vender/id967185651"
+		}
+	],
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#000000",
+	"background_color": "#ffffff"
 }
