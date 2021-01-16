@@ -68,6 +68,11 @@ const LoginForm = ({ setToken }) => {
 	)
 }
 
+const productStatus = (productInfo) => {
+	if (productInfo?.status == 422) return 'renovacion no disponible'
+	return 'Renovado con exito'
+}
+
 const MyOrders = ({ orders, productsAdsStatus }) => {
 	if (!orders) return <div>Cargando Anuncios</div>
 	return (
@@ -81,7 +86,7 @@ const MyOrders = ({ orders, productsAdsStatus }) => {
 								<img src={order?.fotos_thumb?.[0]} alt={order.titulo} />
 								<span className={'article_title'}>{order.titulo}</span>
 								<span className={'article_title'}>
-									{productsAdsStatus[index]?.status}
+									{productStatus(productsAdsStatus[index])}
 								</span>
 							</div>
 						))}
