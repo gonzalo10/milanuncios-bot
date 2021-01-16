@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import './App.css'
+import Loader from './loader'
 
 const apiCall = async (path, body) => {
 	try {
@@ -67,7 +68,7 @@ const LoginForm = ({ setToken }) => {
 	)
 }
 
-const MyOrders = ({ getOrders, orders }) => {
+const MyOrders = ({ orders, productsAdsStatus }) => {
 	if (!orders) return <div>Cargando Anuncios</div>
 	return (
 		<div className={'get_orders_wrapper'}>
@@ -75,10 +76,13 @@ const MyOrders = ({ getOrders, orders }) => {
 				<>
 					<span className={'get_orders_title'}>Mis anuncios</span>
 					<div className={'Products_wrapper'}>
-						{orders.map((order) => (
+						{orders.map((order, index) => (
 							<div className={'Product_wrapper'}>
 								<img src={order.fotos_thumb[0]} alt={order.titulo} />
 								<span className={'article_title'}>{order.titulo}</span>
+								<span className={'article_title'}>
+									{productsAdsStatus[index]?.status}
+								</span>
 							</div>
 						))}
 					</div>
@@ -91,9 +95,14 @@ const MyOrders = ({ getOrders, orders }) => {
 const RenewButton = ({ handleClick, renewStatus }) => {
 	return (
 		<button onClick={handleClick} className={'button Renew_button'}>
-			{renewStatus.isLoading
-				? 'Renovando anuncios'
-				: 'Renovar todos mis anuncios'}
+			{renewStatus.isLoading ? (
+				<>
+					<span>Renovando anuncios</span>
+					<Loader />
+				</>
+			) : (
+				'Renovar todos mis anuncios'
+			)}
 		</button>
 	)
 }
@@ -109,7 +118,7 @@ const renewProduct = (token, adId) => {
 const bulkRenew = async (token, productsAds) => {
 	const promises = productsAds.map((ad) => renewProduct(token, ad.idanuncio))
 	const response = await Promise.all(promises)
-	console.log(response)
+	return response
 }
 
 const getApiStatus = (status) => {
@@ -125,6 +134,7 @@ const getApiStatus = (status) => {
 function App() {
 	const [token, setToken] = useState(null)
 	const [productsAds, setProductsAds] = useState([])
+	const [productsAdsStatus, setProductsAdsStatus] = useState([])
 	const [renewStatus, setRenewStatus] = useState([])
 
 	const getProductsAds = useCallback(async () => {
@@ -141,8 +151,13 @@ function App() {
 
 	const renewAllProducts = async () => {
 		setRenewStatus('loading')
-		const errors = await bulkRenew(token, productsAds)
-		setRenewStatus(!!errors ? 'error' : 'success')
+		try {
+			const producStatus = await bulkRenew(token, productsAds)
+			setProductsAdsStatus(producStatus)
+			setRenewStatus('success')
+		} catch (err) {
+			setRenewStatus('error')
+		}
 	}
 
 	return (
@@ -151,7 +166,10 @@ function App() {
 				<LoginForm setToken={setToken} />
 			) : (
 				<>
-					<MyOrders orders={productsAds} />
+					<MyOrders
+						orders={productsAds}
+						productsAdsStatus={productsAdsStatus}
+					/>
 					<div className={'Renew_button_wrapper'}>
 						<RenewButton
 							handleClick={renewAllProducts}
