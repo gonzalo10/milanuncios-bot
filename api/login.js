@@ -76,7 +76,6 @@ async function getAllOrders(apiToken) {
 
 const login = async (req, res) => {
 	const { user, password } = req.body
-	console.log(user, password)
 	try {
 		const response = await fetch('https://www.milanuncios.com/api/v3/logins', {
 			headers: customHeaders,
@@ -84,13 +83,11 @@ const login = async (req, res) => {
 			...methodAndCors,
 			body: `{"identifier":"${user}","password":"${password}","rememberMe":"true"}`
 		})
-		console.log(response.status)
 		const myJson = await response.json()
-		console.log(myJson)
 		const apiToken = myJson.session.apiToken
 		respondAPIQuery(res, apiToken)
 	} catch (err) {
-		console.log(err)
+		console.error(err)
 	}
 }
 
@@ -101,18 +98,19 @@ async function getMyOrders(req, res) {
 	respondAPIQuery(res, anuncios)
 }
 
-async function renewArticles(req, res) {
-	const apiToken = req.body.token
-	const isRenew = await renewOrder(apiToken)
-	console.log(isRenew.status)
-	respondAPIQuery(res, isRenew)
+async function renewAd(req, res) {
+	console.log(req.body)
+	const { adId, token } = req.body
+	const response = await renewAd_api(token, adId)
+	console.log(response)
+	respondAPIQuery(res, { status: response.status, adId })
 }
 
-function renewOrder(apiToken, orderId) {
-	return fetch(`https://www.milanuncios.com/api/v4/ads/${orderId}/renew`, {
+function renewAd_api(token, adId) {
+	return fetch(`https://www.milanuncios.com/api/v4/ads/${adId}/renew`, {
 		headers: {
 			...customHeaders,
-			token: apiToken
+			token
 		},
 		...customReferrer,
 		...methodAndCors,
@@ -141,7 +139,7 @@ module.exports = (req, res) => {
 			getMyOrders(req, res)
 			break
 		case 'renew':
-			renewArticles(req, res)
+			renewAd(req, res)
 			break
 		default:
 			break

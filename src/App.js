@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import './App.css'
 
 const apiCall = async (path, body) => {
@@ -31,7 +31,6 @@ const LoginForm = ({ setToken }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 		const token = await apiCall('/api/login', { type: 'login', user, password })
-		console.log('handleSubmit', token)
 		setToken(token)
 	}
 
@@ -46,6 +45,7 @@ const LoginForm = ({ setToken }) => {
 						value={user}
 						onChange={handleUserChange}
 						placeholder={'Usuario de Milanuncios'}
+						autoComplete={'username'}
 					/>
 				</div>
 				<div>
@@ -55,30 +55,30 @@ const LoginForm = ({ setToken }) => {
 						value={password}
 						onChange={handlePasswordChange}
 						placeholder={'Contraseña de Milanuncios'}
+						autoComplete='current-password'
+						type='password'
 					/>
 				</div>
-				<button className={'login_button'}>Conectar con milanuncios</button>
+				<button className={'button login_button'}>
+					Conectar con milanuncios
+				</button>
 			</form>
 		</div>
 	)
 }
 
 const MyOrders = ({ getOrders, orders }) => {
+	if (!orders) return <div>Cargando Anuncios</div>
 	return (
-		<div>
-			<div className={'get_orders_wrapper'}>
-				<button onClick={getOrders} className={'basic_button'}>
-					Cargar mis anuncios
-				</button>
-			</div>
+		<div className={'get_orders_wrapper'}>
 			{orders && (
 				<>
 					<span className={'get_orders_title'}>Mis anuncios</span>
 					<div className={'Products_wrapper'}>
 						{orders.map((order) => (
 							<div className={'Product_wrapper'}>
-								<span>{order.titulo}</span>
 								<img src={order.fotos_thumb[0]} alt={order.titulo} />
+								<span className={'article_title'}>{order.titulo}</span>
 							</div>
 						))}
 					</div>
@@ -88,29 +88,61 @@ const MyOrders = ({ getOrders, orders }) => {
 	)
 }
 
-const RenewButton = ({ handleClick }) => {
+const RenewButton = ({ handleClick, renewStatus }) => {
 	return (
-		<button onClick={handleClick} className={'Renew_button'}>
-			Renover todos mis anuncios
+		<button onClick={handleClick} className={'button Renew_button'}>
+			{renewStatus.isLoading
+				? 'Renovando anuncios'
+				: 'Renovar todos mis anuncios'}
 		</button>
 	)
 }
 
+const renewProduct = (token, adId) => {
+	return apiCall('/api/login', {
+		type: 'renew',
+		token: token,
+		adId
+	})
+}
+
+const bulkRenew = async (token, productsAds) => {
+	const promises = productsAds.map((ad) => renewProduct(token, ad.idanuncio))
+	const response = await Promise.all(promises)
+	console.log(response)
+}
+
+const getApiStatus = (status) => {
+	let isLoading = false
+	let isSuccess = false
+	let hasError = false
+	if (status === 'loading') isLoading = true
+	if (status === 'error') hasError = true
+	if (status === 'success') isSuccess = true
+	return { isLoading, isSuccess, hasError }
+}
+
 function App() {
 	const [token, setToken] = useState(null)
-	const [orders, setOrders] = useState([])
+	const [productsAds, setProductsAds] = useState([])
+	const [renewStatus, setRenewStatus] = useState([])
 
-	const getOrders = async () => {
-		const orders = await apiCall('/api/login', { type: 'orders', token: token })
-		setOrders(orders)
-	}
-
-	const renewProducts = async () => {
-		const hasBeenSuccesfull = await apiCall('/api/login', {
-			type: 'renew',
+	const getProductsAds = useCallback(async () => {
+		const productsAdsRaw = await apiCall('/api/login', {
+			type: 'orders',
 			token: token
 		})
-		console.log({ hasBeenSuccesfull })
+		setProductsAds(productsAdsRaw)
+	}, [token])
+
+	useEffect(() => {
+		token && getProductsAds()
+	}, [token, getProductsAds])
+
+	const renewAllProducts = async () => {
+		setRenewStatus('loading')
+		const errors = await bulkRenew(token, productsAds)
+		setRenewStatus(!!errors ? 'error' : 'success')
 	}
 
 	return (
@@ -119,9 +151,12 @@ function App() {
 				<LoginForm setToken={setToken} />
 			) : (
 				<>
-					<MyOrders getOrders={getOrders} orders={orders} />
+					<MyOrders orders={productsAds} />
 					<div className={'Renew_button_wrapper'}>
-						<RenewButton handleClick={renewProducts} />
+						<RenewButton
+							handleClick={renewAllProducts}
+							renewStatus={getApiStatus(renewStatus)}
+						/>
 					</div>
 				</>
 			)}
