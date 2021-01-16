@@ -78,7 +78,7 @@ const MyOrders = ({ orders, productsAdsStatus }) => {
 					<div className={'Products_wrapper'}>
 						{orders.map((order, index) => (
 							<div className={'Product_wrapper'}>
-								<img src={order.fotos_thumb[0]} alt={order.titulo} />
+								<img src={order?.fotos_thumb?.[0]} alt={order.titulo} />
 								<span className={'article_title'}>{order.titulo}</span>
 								<span className={'article_title'}>
 									{productsAdsStatus[index]?.status}
