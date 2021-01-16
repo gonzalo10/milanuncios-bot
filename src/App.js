@@ -36,20 +36,28 @@ const LoginForm = ({ setToken }) => {
 	}
 
 	return (
-		<div>
-			<h3>Login</h3>
+		<div className={'login_wrapper'}>
+			<h3 className={'login_title'}>Inicia sesion en milanuncios</h3>
 			<form onSubmit={handleSubmit}>
-				<input
-					value={user}
-					onChange={handleUserChange}
-					placeholder={'Usuario de Milanuncios'}
-				/>
-				<input
-					value={password}
-					onChange={handlePasswordChange}
-					placeholder={'Contraseña de Milanuncios'}
-				/>
-				<button>Get token</button>
+				<div className={'login_input_wrapper'}>
+					<label className={'login_input_label'}>Email</label>
+					<input
+						className={'login_input'}
+						value={user}
+						onChange={handleUserChange}
+						placeholder={'Usuario de Milanuncios'}
+					/>
+				</div>
+				<div>
+					<label className={'login_input_label'}>Contraseña</label>
+					<input
+						className={'login_input'}
+						value={password}
+						onChange={handlePasswordChange}
+						placeholder={'Contraseña de Milanuncios'}
+					/>
+				</div>
+				<button className={'login_button'}>Conectar con milanuncios</button>
 			</form>
 		</div>
 	)
@@ -106,7 +114,7 @@ function App() {
 	}
 
 	return (
-		<div>
+		<>
 			{!token ? (
 				<LoginForm setToken={setToken} />
 			) : (
@@ -117,7 +125,7 @@ function App() {
 					</div>
 				</>
 			)}
-		</div>
+		</>
 	)
 }
 
