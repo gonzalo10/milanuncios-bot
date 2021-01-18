@@ -69,8 +69,9 @@ const LoginForm = ({ setToken }) => {
 }
 
 const productStatus = (productInfo) => {
-	if (productInfo?.status == 422) return 'renovacion no disponible'
-	return 'Renovado con exito'
+	if (+productInfo?.status === 422) return 'renovacion no disponible'
+	if (+productInfo?.status === 200) return 'Renovado con exito'
+	return ''
 }
 
 const MyOrders = ({ orders, productsAdsStatus }) => {
